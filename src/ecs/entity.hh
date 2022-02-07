@@ -16,12 +16,14 @@ namespace newt::ecs {
             inline std::size_t get_index() const { return index; }
             inline void set_index(std::size_t index) { this->index = index; }
 
+            // Not inherently thread safe
             template<typename C>
             inline bool has_component() const {
                 // If the value is 0, then the component is not present
                 return component_indices.at(C::ID) != 0;
             }
 
+            // Not inherently thread safe
             template<typename C>
             inline const C& get_component() const {
                 if (!has_component<C>()) {
@@ -31,6 +33,7 @@ namespace newt::ecs {
                 return db.get_component_set<C>().get_at(component_indices.at(C::ID) - 1);
             }
 
+            // Not inherently thread safe
             template<typename C>
             void add_component(const C& component) {
                 if (has_component<C>()) {
@@ -40,6 +43,7 @@ namespace newt::ecs {
                 component_indices.at(C::ID) = db.get_component_set<C>().add(component) + 1;
             }
 
+            // Not inherently thread safe
             template<typename C>
             void remove_component() {
                 if (!has_component<C>()) {
