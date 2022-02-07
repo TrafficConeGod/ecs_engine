@@ -26,6 +26,8 @@ namespace newt::ecs {
             inline std::mutex& get_mutex() {
                 return mutex;
             }
+
+            inline std::size_t get_size() const { return containers.size(); }
         
             std::size_t add(const T& value) {
                 std::size_t index = containers.size();
@@ -58,7 +60,7 @@ namespace newt::ecs {
 
                     inline iterator& operator++() {
                         index++;
-                        while (!ref.has_at(index)) {
+                        while (index < ref.get_size() && !ref.has_at(index)) {
                             index++;
                         }
                         return *this;

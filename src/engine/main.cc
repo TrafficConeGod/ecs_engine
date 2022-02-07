@@ -16,10 +16,11 @@ int main() {
     e.add_component<components::core>({ .val = 20 });
 
     // two ways of iterating through components
-    for (const auto& c : db.core_set) {
+    for (auto& c : db.core_set) {
         std::printf("%zu\n", c.val);
+        c.val = 30;
     }
-    for (const auto& e : db.entity_set) {
+    for (auto& e : db.entity_set) {
         std::printf("%zu\n", e.get_component<components::core>().val);
     }
     return 0;
