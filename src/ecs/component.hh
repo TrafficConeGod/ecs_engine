@@ -3,6 +3,7 @@
 
 namespace newt::ecs {
     struct head_component {
+        // Getter for the next component ID.
         static std::size_t next_id();
     };
 

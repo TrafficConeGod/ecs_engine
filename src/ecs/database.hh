@@ -9,6 +9,7 @@ namespace newt::ecs {
     struct entity;
     struct database;
 
+    // C++ template magic to get the component set from type
     namespace database_impl {
         template<typename C>
         constexpr const indexed_set<C>& get_component_set(const database& db);
@@ -30,6 +31,7 @@ namespace newt::ecs {
         }
     };
 
+    // Implementation of get_component_set
     namespace database_impl {
         template<>
         constexpr const indexed_set<components::core>& get_component_set<components::core>(const database& db) {

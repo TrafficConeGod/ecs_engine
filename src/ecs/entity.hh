@@ -18,6 +18,7 @@ namespace newt::ecs {
 
             template<typename C>
             inline bool has_component() const {
+                // If the value is 0, then the component is not present
                 return component_indices.at(C::ID) != 0;
             }
 
@@ -26,6 +27,7 @@ namespace newt::ecs {
                 if (!has_component<C>()) {
                     throw std::runtime_error("no component found");
                 }
+                // We subtract one since the index stored must be greater than 0
                 return db.get_component_set<C>().get_at(component_indices.at(C::ID) - 1);
             }
 
@@ -34,6 +36,7 @@ namespace newt::ecs {
                 if (has_component<C>()) {
                     throw std::runtime_error("component already exists");
                 }
+                // We add one since the index stored must be greater than 0
                 component_indices.at(C::ID) = db.get_component_set<C>().add(component) + 1;
             }
 
@@ -42,7 +45,9 @@ namespace newt::ecs {
                 if (!has_component<C>()) {
                     throw std::runtime_error("no component found");
                 }
+                // We subtract one since the index stored must be greater than 0
                 db.get_component_set<C>().remove_at(component_indices.at(C::ID) - 1);
+                // Resetting to the default value
                 component_indices.at(C::ID) = 0;
             }
     };
