@@ -1,0 +1,39 @@
+#pragma once
+#include "indexed_set.hh"
+
+namespace newt::components {
+    struct core;
+};
+
+namespace newt::ecs {
+    struct entity;
+    struct database;
+
+    namespace database_impl {
+        template<typename C>
+        constexpr const indexed_set<C>& get_component_set(const database& db);
+    }
+
+    struct database {
+        indexed_set<entity> entity_set;
+        indexed_set<components::core> core_set;
+
+        std::size_t create_entity();
+
+        template<typename C>
+        constexpr const indexed_set<C>& get_component_set() const {
+            return database_impl::get_component_set<C>(*this);
+        }
+        template<typename C>
+        constexpr indexed_set<C>& get_component_set() {
+            return const_cast<indexed_set<C>&>(database_impl::get_component_set<C>(*this));
+        }
+    };
+
+    namespace database_impl {
+        template<>
+        constexpr const indexed_set<components::core>& get_component_set<components::core>(const database& db) {
+            return db.core_set;
+        }
+    }
+}
