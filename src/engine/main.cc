@@ -7,7 +7,7 @@ using namespace ecs;
 
 int main() {
     database db;
-    std::size_t entity_index = db.create_entity();
+    auto entity_index = db.create_entity();
 
     std::lock_guard lock(db.entity_set.get_mutex());
     auto& e = db.entity_set.get_at(entity_index);

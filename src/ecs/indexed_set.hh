@@ -53,34 +53,34 @@ namespace newt::ecs {
 
             class iterator {
                 private:
-                    indexed_set& ref;
-                    std::size_t index;
+                    typename std::vector<value_container>::iterator it;
+                    typename std::vector<value_container>::iterator end;
                 public:
-                    inline iterator(indexed_set& ref_, std::size_t index_) : ref(ref_), index(index_) {}
+                    inline iterator(const typename std::vector<value_container>::iterator& it_, const typename std::vector<value_container>::iterator& end_) : it(it_), end(end_) {}
 
                     inline iterator& operator++() {
-                        index++;
-                        while (index < ref.get_size() && !ref.has_at(index)) {
-                            index++;
+                        it++;
+                        while (it != end && !it->has_value) {
+                            it++;
                         }
                         return *this;
                     }
 
-                    inline bool operator!=(const iterator& it) const {
-                        return index != it.index;
+                    inline bool operator!=(const iterator& rhs) const {
+                        return it != rhs.it;
                     }
 
                     inline T& operator*() {
-                        return ref.get_at(index);
+                        return it->value;
                     }
             };
 
             inline iterator begin() {
-                return iterator(*this, 0);
+                return iterator(containers.begin(), containers.end());
             }
 
             inline iterator end() {
-                return iterator(*this, containers.size());
+                return iterator(containers.end(), containers.end());
             }
     };
 }
