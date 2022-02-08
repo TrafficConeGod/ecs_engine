@@ -30,18 +30,6 @@ namespace newt::ecs {
             }
     
             inline std::size_t get_size() const { return containers.size(); }
-        
-            // Not inherently thread safe
-            std::size_t add(const T& value) {
-                std::size_t index = containers.size();
-                containers.push_back({ .has_value = true, .value = value });
-                return index;
-            }
-
-            // Not inherently thread safe
-            void remove_at(std::size_t index) {
-                containers.at(index).has_value = false;
-            }
 
             // Not inherently thread safe
             bool has_at(std::size_t index) const {
@@ -56,6 +44,18 @@ namespace newt::ecs {
             // Not inherently thread safe
             inline T& get_at(std::size_t index) {
                 return const_cast<T&>(get_at_impl(index));
+            }
+        
+            // Not inherently thread safe
+            std::size_t add(const T& value) {
+                std::size_t index = containers.size();
+                containers.push_back({ .has_value = true, .value = value });
+                return index;
+            }
+
+            // Not inherently thread safe
+            void remove_at(std::size_t index) {
+                containers.at(index).has_value = false;
             }
 
             class iterator {
