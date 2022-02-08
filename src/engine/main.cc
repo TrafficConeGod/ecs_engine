@@ -9,10 +9,9 @@ int main() {
     database db;
     auto entity_index = db.create_entity();
 
-    std::lock_guard lock(db.entity_set.mutex);
+    std::scoped_lock lock(db.entity_set.mutex, db.core_set.mutex);
     auto& e = db.entity_set.at(entity_index);
 
-    std::lock_guard lock2(db.core_set.mutex);
     e.set_component<components::core>(db, { .val = 20 });
     e.erase_component<components::core>(db);
     e.set_component<components::core>(db, { .val = 20 });
