@@ -25,7 +25,7 @@ namespace newt::lib {
         public:
             inline std::size_t size() const { return containers.size(); }
 
-            bool has_at(std::size_t index) const {
+            inline bool has_at(std::size_t index) const {
                 return containers.at(index).has_value;
             }
 

@@ -9,7 +9,7 @@ int main() {
     database db;
     auto entity_index = db.create_entity();
 
-    std::scoped_lock lock(db.entity_set.mutex, db.core_set.mutex);
+    std::scoped_lock lock(db.entity_set.mutex(), db.core_set.mutex());
     auto& e = db.entity_set.at(entity_index);
 
     e.set_component<components::core>(db, { .val = 20 });
