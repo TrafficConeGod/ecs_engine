@@ -25,5 +25,6 @@ int main() {
     for (auto& e : db.entity_set) {
         std::printf("%zu\n", e.get_component<components::core>().val);
     }
+
     return 0;
 }

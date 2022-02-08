@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <list>
 #include <stdexcept>
 
 namespace newt::lib {
@@ -12,6 +13,7 @@ namespace newt::lib {
         };
 
         std::vector<value_container> containers;
+        std::list<std::size_t> free_indices;
 
         const T& at_impl(std::size_t index) const {
             auto& container = containers.at(index);
@@ -36,13 +38,22 @@ namespace newt::lib {
             }
         
             std::size_t insert(const T& value) {
-                std::size_t index = containers.size();
-                containers.push_back({ .has_value = true, .value = value });
-                return index;
+                if (free_indices.size() > 0) {
+                    std::size_t index = free_indices.back();
+                    free_indices.pop_back();
+                    containers.at(index).value = value;
+                    containers.at(index).has_value = true;
+                    return index;
+                } else {
+                    std::size_t index = containers.size();
+                    containers.push_back({ .has_value = true, .value = value });
+                    return index;
+                }
             }
 
             void erase_at(std::size_t index) {
                 containers.at(index).has_value = false;
+                free_indices.push_back(index);
             }
 
             class iterator {
