@@ -41,8 +41,7 @@ namespace newt::lib {
                 if (free_indices.size() > 0) {
                     std::size_t index = free_indices.back();
                     free_indices.pop_back();
-                    containers.at(index).value = value;
-                    containers.at(index).has_value = true;
+                    containers.at(index) = { .has_value = true, .value = value };
                     return index;
                 } else {
                     std::size_t index = containers.size();
