@@ -71,7 +71,13 @@ namespace newt::lib {
             };
 
             inline iterator begin() {
-                return iterator(containers.begin(), containers.end());
+                auto it = containers.begin();
+                auto end = containers.end();
+                // If there is no value at the current location, then we need to increment until we find one
+                while (it != end && !it->has_value) {
+                    it++;
+                }
+                return iterator(it, end);
             }
 
             inline iterator end() {
