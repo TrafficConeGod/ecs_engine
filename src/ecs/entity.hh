@@ -11,7 +11,7 @@ namespace newt::ecs {
         std::array<std::size_t, MAX_COMPONENTS> component_indices = {0};
 
         template<typename C>
-        inline const C& get_component_impl(database& db) const {
+        const C& get_component_impl(database& db) const {
             if (!has_component<C>()) {
                 throw std::runtime_error("no component found");
             }
