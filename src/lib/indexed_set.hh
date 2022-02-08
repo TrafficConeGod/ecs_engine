@@ -23,17 +23,17 @@ namespace newt::lib {
             return container.value;
         }
         public:
-            inline std::size_t size() const { return containers.size(); }
+            constexpr std::size_t size() const { return containers.size(); }
 
             bool has_at(std::size_t index) const {
                 return containers.at(index).has_value;
             }
 
-            inline const T& at(std::size_t index) const {
+            constexpr const T& at(std::size_t index) const {
                 return at_impl(index);
             }
 
-            inline T& at(std::size_t index) {
+            constexpr T& at(std::size_t index) {
                 return const_cast<T&>(at_impl(index));
             }
         
@@ -60,9 +60,9 @@ namespace newt::lib {
                     typename std::vector<value_container>::iterator it;
                     typename std::vector<value_container>::iterator end;
                 public:
-                    inline iterator(const typename std::vector<value_container>::iterator& it_, const typename std::vector<value_container>::iterator& end_) : it(it_), end(end_) {}
+                    constexpr iterator(const typename std::vector<value_container>::iterator& it_, const typename std::vector<value_container>::iterator& end_) : it(it_), end(end_) {}
 
-                    inline iterator& operator++() {
+                    constexpr iterator& operator++() {
                         it++;
                         // If there is no value at the current location, then we need to increment until we find one
                         while (it != end && !it->has_value) {
@@ -71,16 +71,16 @@ namespace newt::lib {
                         return *this;
                     }
 
-                    inline bool operator!=(const iterator& rhs) const {
+                    constexpr bool operator!=(const iterator& rhs) const {
                         return it != rhs.it;
                     }
 
-                    inline T& operator*() {
+                    constexpr T& operator*() {
                         return it->value;
                     }
             };
 
-            inline iterator begin() {
+            constexpr iterator begin() {
                 auto it = containers.begin();
                 auto end = containers.end();
                 // If there is no value at the current location, then we need to increment until we find one
@@ -90,7 +90,7 @@ namespace newt::lib {
                 return iterator(it, end);
             }
 
-            inline iterator end() {
+            constexpr iterator end() {
                 return iterator(containers.end(), containers.end());
             }
     };

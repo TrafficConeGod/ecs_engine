@@ -11,7 +11,7 @@ namespace newt::ecs {
         std::array<std::size_t, MAX_COMPONENTS> component_indices = {0};
 
         template<typename C>
-        inline const C& get_component_impl(database& db) const {
+        constexpr const C& get_component_impl(database& db) const {
             if (!has_component<C>()) {
                 throw std::runtime_error("no component found");
             }
@@ -19,25 +19,25 @@ namespace newt::ecs {
             return db.get_component_set<C>().at(component_indices.at(C::ID) - 1);
         }
         public:
-            inline std::size_t get_index() const { return index; }
-            inline void set_index(std::size_t index) { this->index = index; }
+            constexpr std::size_t get_index() const { return index; }
+            constexpr void set_index(std::size_t index) { this->index = index; }
 
             // Not inherently thread safe
             template<typename C>
-            inline bool has_component() const {
+            constexpr bool has_component() const {
                 // If the value is 0, then the component is not present
                 return component_indices.at(C::ID) != 0;
             }
 
             // Not inherently thread safe
             template<typename C>
-            inline const C& get_component(database& db) const {
+            constexpr const C& get_component(database& db) const {
                 return get_component_impl<C>(db);
             }
 
             // Not inherently thread safe
             template<typename C>
-            inline C& get_component(database& db) {
+            constexpr C& get_component(database& db) {
                 return const_cast<C&>(get_component_impl<C>(db));
             }
 
