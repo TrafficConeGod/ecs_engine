@@ -10,6 +10,7 @@ int main() {
     auto entity_index = db.create_entity();
 
     std::scoped_lock lock(db.entity_set.mutex(), db.core_set.mutex());
+    db.core_set.listening_for_inserted_indices() = true;
     auto& e = db.entity_set.at(entity_index);
 
     e.set_component<components::core>(db, { .val = 20 });
@@ -23,6 +24,10 @@ int main() {
     }
     for (auto& e : db.entity_set) {
         std::printf("%zu\n", e.get_component<components::core>(db).val);
+    }
+
+    for (auto& index : db.core_set.move_inserted_indices()) {
+        std::printf("%zu\n", index);
     }
 
     return 0;

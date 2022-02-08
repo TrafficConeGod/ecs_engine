@@ -1,15 +1,22 @@
 #pragma once
 #include "lib/indexed_set.hh"
 #include <mutex>
+#include <stdexcept>
 
 namespace newt::ecs {
     template<typename T>
     struct database_set {
         std::mutex mutex_;
         lib::indexed_set<T> set;
+        bool listening_for_inserted_indices_ = false;
+        std::vector<std::size_t> inserted_indices;
         public:
             inline std::mutex& mutex() {
                 return mutex_;
+            }
+
+            inline bool& listening_for_inserted_indices() {
+                return listening_for_inserted_indices_;
             }
 
             inline std::size_t size() const { return set.size(); }
@@ -22,16 +29,37 @@ namespace newt::ecs {
                 return set.at(index);
             }
 
-            inline T& at(std::size_t index) {
+            T& at(std::size_t index) {
                 return set.at(index);
             }
         
-            inline std::size_t insert(const T& value) {
-                return set.insert(value);
+            std::size_t insert(const T& value) {
+                if (listening_for_inserted_indices_) {
+                    inserted_indices.push_back(set.insert(value));
+                    return inserted_indices.back();
+                } else {
+                    return set.insert(value);
+                }
             }
 
-            inline void erase_at(std::size_t index) {
+            void erase_at(std::size_t index) {
+                if (listening_for_inserted_indices_) {
+                    // Since std::erase_if would be less efficient, we have to do it manually
+                    for (auto it = inserted_indices.begin(); it != inserted_indices.end(); ++it) {
+                        if (*it == index) {
+                            inserted_indices.erase(it);
+                            break;
+                        }
+                    }
+                }
                 set.erase_at(index);
+            }
+
+            std::vector<std::size_t> move_inserted_indices() {
+                if (!listening_for_inserted_indices_) {
+                    throw std::runtime_error("listening_for_inserted_indices must be true to use this function");
+                }
+                return std::move(inserted_indices);
             }
 
             inline typename lib::indexed_set<T>::iterator begin() {
