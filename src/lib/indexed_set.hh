@@ -1,22 +1,19 @@
 #pragma once
-#include <mutex>
 #include <vector>
 #include <stdexcept>
 
-namespace newt::ecs {
+namespace newt::lib {
     template<typename T>
     class indexed_set {
-        std::mutex mutex;
-
         // Container for the actual data since this set may contain elements with no value.
         struct value_container {
-            bool has_value = true;
+            bool has_value = false;
             T value;
         };
 
         std::vector<value_container> containers;
 
-        const T& get_at_impl(std::size_t index) const {
+        const T& at_impl(std::size_t index) const {
             auto& container = containers.at(index);
             if (!container.has_value) {
                 throw std::out_of_range("value not found");
@@ -24,37 +21,27 @@ namespace newt::ecs {
             return container.value;
         }
         public:
-            // IMPORTANT: Always lock the mutex of this indexed set *before* using any of the non inherently thread safe functions
-            inline std::mutex& get_mutex() {
-                return mutex;
-            }
-    
-            inline std::size_t get_size() const { return containers.size(); }
+            inline std::size_t size() const { return containers.size(); }
 
-            // Not inherently thread safe
             bool has_at(std::size_t index) const {
                 return containers.at(index).has_value;
             }
 
-            // Not inherently thread safe
-            inline const T& get_at(std::size_t index) const {
-                return get_at_impl(index);
+            inline const T& at(std::size_t index) const {
+                return at_impl(index);
             }
 
-            // Not inherently thread safe
-            inline T& get_at(std::size_t index) {
-                return const_cast<T&>(get_at_impl(index));
+            inline T& at(std::size_t index) {
+                return const_cast<T&>(at_impl(index));
             }
         
-            // Not inherently thread safe
-            std::size_t add(const T& value) {
+            std::size_t insert(const T& value) {
                 std::size_t index = containers.size();
                 containers.push_back({ .has_value = true, .value = value });
                 return index;
             }
 
-            // Not inherently thread safe
-            void remove_at(std::size_t index) {
+            void erase_at(std::size_t index) {
                 containers.at(index).has_value = false;
             }
 
@@ -83,12 +70,10 @@ namespace newt::ecs {
                     }
             };
 
-            // Not inherently thread safe
             inline iterator begin() {
                 return iterator(containers.begin(), containers.end());
             }
 
-            // Not inherently thread safe
             inline iterator end() {
                 return iterator(containers.end(), containers.end());
             }

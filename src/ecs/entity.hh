@@ -17,7 +17,7 @@ namespace newt::ecs {
                 throw std::runtime_error("no component found");
             }
             // We subtract one since the index stored must be greater than 0
-            return db.get_component_set<C>().get_at(component_indices.at(C::ID) - 1);
+            return db.get_component_set<C>().at(component_indices.at(C::ID) - 1);
         }
         public:
             inline entity(database& db_) : db(db_) {}
@@ -46,22 +46,22 @@ namespace newt::ecs {
 
             // Not inherently thread safe
             template<typename C>
-            void add_component(const C& component) {
+            void set_component(const C& component) {
                 if (has_component<C>()) {
                     throw std::runtime_error("component already exists");
                 }
                 // We add one since the index stored must be greater than 0
-                component_indices.at(C::ID) = db.get_component_set<C>().add(component) + 1;
+                component_indices.at(C::ID) = db.get_component_set<C>().insert(component) + 1;
             }
 
             // Not inherently thread safe
             template<typename C>
-            void remove_component() {
+            void erase_component() {
                 if (!has_component<C>()) {
                     throw std::runtime_error("no component found");
                 }
                 // We subtract one since the index stored must be greater than 0
-                db.get_component_set<C>().remove_at(component_indices.at(C::ID) - 1);
+                db.get_component_set<C>().erase_at(component_indices.at(C::ID) - 1);
                 // Resetting to the default value
                 component_indices.at(C::ID) = 0;
             }
