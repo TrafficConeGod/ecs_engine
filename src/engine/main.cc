@@ -1,42 +1,27 @@
 #include "ecs/entity.hh"
-#include "components/core.hh"
+#include "components/rigid_transform_2d.hh"
+#include "components/rotational_transform_2d..hh"
 #include "lib/vector.hh"
 #include <iostream>
 
 using namespace newt;
 using namespace ecs;
+using namespace components;
 
 int main() {
     database db;
-    auto entity_index = db.create_entity();
 
-    std::scoped_lock lock(db.entity_set.mutex(), db.core_set.mutex());
-    db.core_set.listening_for_inserted_indices() = true;
-    auto& e = db.entity_set.at(entity_index);
+    std::scoped_lock lock(db.entity_set.mutex(), db.rigid_transform_2d_set.mutex());
+    auto& e = db.entity_set.at(db.create_entity());
+    e.set_component<rigid_transform_2d>(db, {
+        .position = {1.f, 2.f},
+        .scale = {3.f, 4.f}
+    });
 
-    e.set_component<components::core>(db, { .val = 20 });
-    e.erase_component<components::core>(db);
-    e.set_component<components::core>(db, { .val = 20 });
-
-    // two ways of iterating through components
-    for (auto& c : db.core_set) {
-        std::printf("%zu\n", c.val);
-        c.val = 30;
+    for (const auto& rtf : db.rigid_transform_2d_set) {
+        std::printf("position = "); rtf.position.print(); std::printf(";\n");
+        std::printf("scale = "); rtf.scale.print(); std::printf(";\n");
     }
-    for (auto& e : db.entity_set) {
-        std::printf("%zu\n", e.get_component<components::core>(db).val);
-    }
-
-    for (auto& index : db.core_set.move_inserted_indices()) {
-        std::printf("%zu\n", index);
-    }
-
-    lib::vector<float, 3> vec = {2, 3, 4};
-    vec *= 20.3f;
-    vec.print();
-
-    lib::vector<int, 3> v2 = vec;
-    v2.print();
 
     return 0;
 }

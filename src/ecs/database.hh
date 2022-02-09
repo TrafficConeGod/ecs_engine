@@ -2,8 +2,17 @@
 #include "database_set.hh"
 
 namespace newt::components {
-    struct core;
+    struct rigid_transform_2d;
+    struct rotational_transform_2d;
 };
+
+#define MAKE_COMPONENT_SET(name) database_set<components::name> name##_set;
+
+#define MAKE_COMPONENT_TEMPLATE_ACCESS(name) \
+template<> \
+constexpr const database_set<components::name>& get_component_set<components::name>(const database& db) { \
+    return db.name##_set; \
+} \
 
 namespace newt::ecs {
     struct entity;
@@ -17,7 +26,8 @@ namespace newt::ecs {
 
     struct database {
         database_set<entity> entity_set;
-        database_set<components::core> core_set;
+        MAKE_COMPONENT_SET(rigid_transform_2d)
+        MAKE_COMPONENT_SET(rotational_transform_2d)
 
         std::size_t create_entity();
 
@@ -33,9 +43,7 @@ namespace newt::ecs {
 
     // Implementation of get_component_set
     namespace database_impl {
-        template<>
-        constexpr const database_set<components::core>& get_component_set<components::core>(const database& db) {
-            return db.core_set;
-        }
+        MAKE_COMPONENT_TEMPLATE_ACCESS(rigid_transform_2d)
+        MAKE_COMPONENT_TEMPLATE_ACCESS(rotational_transform_2d)
     }
 }

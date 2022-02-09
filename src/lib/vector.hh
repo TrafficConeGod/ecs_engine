@@ -21,10 +21,12 @@ namespace newt::lib {
             inline T w() const { return data.at(3); }
 
             inline void print() const {
-                for (auto val : data) {
-                    std::cout << val << " ";
+                for (std::size_t i = 0; i < dim; ++i) {
+                    std::cout << data[i];
+                    if (i != dim - 1) {
+                        std::cout << ", ";
+                    }
                 }
-                std::printf("\n");
             }
 
             template<typename U>
