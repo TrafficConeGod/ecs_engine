@@ -1,5 +1,6 @@
 #include "ecs/entity.hh"
 #include "components/core.hh"
+#include "lib/vector.hh"
 #include <iostream>
 
 using namespace newt;
@@ -29,6 +30,10 @@ int main() {
     for (auto& index : db.core_set.move_inserted_indices()) {
         std::printf("%zu\n", index);
     }
+
+    lib::vector<float, 3> vec = {2, 3, 4};
+    vec *= 20.f;
+    vec.print();
 
     return 0;
 }
