@@ -58,12 +58,15 @@ namespace newt::ecs {
                 set.erase_at(index);
             }
 
-            // Return value is the move constructed value of inserted_indices (inserted_indices will be empty afterwards)
-            std::vector<std::size_t> move_inserted_indices() {
+            void clear_inserted_indices() {
+                inserted_indices.clear();
+            }
+
+            std::vector<std::size_t> copy_inserted_indices() const {
                 if (!listening_for_inserted_indices_) {
                     throw std::runtime_error("listening_for_inserted_indices must be true to use this function");
                 }
-                return std::move(inserted_indices);
+                return inserted_indices;
             }
 
             inline typename lib::indexed_set<T>::iterator begin() {
