@@ -2,7 +2,8 @@
 #include "components/rigid_transform_2d.hh"
 #include "components/rotational_transform_2d..hh"
 #include "lib/vector.hh"
-#include <iostream>
+#include "systems/core.hh"
+#include "lib/jthread.hh"
 
 using namespace newt;
 using namespace ecs;
@@ -15,13 +16,10 @@ int main() {
     auto& e = db.entity_set.at(db.create_entity());
     e.set_component<rigid_transform_2d>(db, {
         .position = {1.f, 2.f},
-        .scale = {3.f, 4.f}
+        .scale = {1.f, 1.618033988749894f}
     });
 
-    for (const auto& rtf : db.rigid_transform_2d_set) {
-        std::printf("position = "); rtf.position.print(); std::printf(";\n");
-        std::printf("scale = "); rtf.scale.print(); std::printf(";\n");
-    }
+    lib::jthread w1(systems::core, &db);
 
     return 0;
 }
