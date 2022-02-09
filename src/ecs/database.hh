@@ -4,6 +4,7 @@
 namespace newt::components {
     struct rigid_transform_2d;
     struct rotational_transform_2d;
+    struct mesh_2d;
 };
 
 #define MAKE_COMPONENT_SET(name) database_set<components::name> name##_set;
@@ -28,6 +29,12 @@ namespace newt::ecs {
         database_set<entity> entity_set;
         MAKE_COMPONENT_SET(rigid_transform_2d)
         MAKE_COMPONENT_SET(rotational_transform_2d)
+        MAKE_COMPONENT_SET(mesh_2d)
+
+        database() = default;
+        database(const database&) = delete;
+        database(database&&) = delete;
+        database& operator=(const database&) = delete;
 
         std::size_t create_entity();
 
@@ -45,5 +52,6 @@ namespace newt::ecs {
     namespace database_impl {
         MAKE_COMPONENT_TEMPLATE_ACCESS(rigid_transform_2d)
         MAKE_COMPONENT_TEMPLATE_ACCESS(rotational_transform_2d)
+        MAKE_COMPONENT_TEMPLATE_ACCESS(mesh_2d)
     }
 }
