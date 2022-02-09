@@ -8,6 +8,7 @@ namespace newt::ecs {
     class entity {
         std::size_t index = 0;
         
+        // If the value of a component index is 0 then this entity does not have that component, otherwise the actual index is subtracted by 1
         std::array<std::size_t, MAX_COMPONENTS> component_indices = {0};
 
         template<typename C>

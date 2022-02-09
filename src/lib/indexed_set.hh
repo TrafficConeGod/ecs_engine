@@ -38,6 +38,7 @@ namespace newt::lib {
             }
         
             std::size_t insert(const T& value) {
+                // If we have a free index, use one of them
                 if (free_indices.size() > 0) {
                     std::size_t index = free_indices.back();
                     free_indices.pop_back();
@@ -52,6 +53,7 @@ namespace newt::lib {
 
             void erase_at(std::size_t index) {
                 containers.at(index).has_value = false;
+                // Add a new free index
                 free_indices.push_back(index);
             }
 

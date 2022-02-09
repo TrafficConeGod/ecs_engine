@@ -15,6 +15,7 @@ namespace newt::ecs {
                 return mutex_;
             }
 
+            // Whether or not to listen for insertion and add the indices to the inserted_indices vector
             inline bool& listening_for_inserted_indices() {
                 return listening_for_inserted_indices_;
             }
@@ -34,6 +35,7 @@ namespace newt::ecs {
             }
         
             std::size_t insert(const T& value) {
+                // If we are listening for inserted indices, add the index to the inserted_indices vector
                 if (listening_for_inserted_indices_) {
                     inserted_indices.push_back(set.insert(value));
                     return inserted_indices.back();
@@ -43,6 +45,7 @@ namespace newt::ecs {
             }
 
             void erase_at(std::size_t index) {
+                // If we are listening for inserted indices, remove the index from the inserted_indices vector
                 if (listening_for_inserted_indices_) {
                     // Since std::erase_if would be less efficient, we have to do it manually
                     for (auto it = inserted_indices.begin(); it != inserted_indices.end(); ++it) {
@@ -55,6 +58,7 @@ namespace newt::ecs {
                 set.erase_at(index);
             }
 
+            // Return value is the move constructed value of inserted_indices (inserted_indices will be empty afterwards)
             std::vector<std::size_t> move_inserted_indices() {
                 if (!listening_for_inserted_indices_) {
                     throw std::runtime_error("listening_for_inserted_indices must be true to use this function");
