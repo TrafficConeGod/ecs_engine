@@ -9,7 +9,7 @@ namespace newt::lib {
         std::array<T, dim> data{};
         public:
             inline vector() = default;
-            inline vector(std::array<T, dim>&& data_) : data(data_) {}
+            inline vector(const std::array<T, dim>& data_) : data(data_) {}
             inline vector(std::initializer_list<T> list) {
                 std::copy(list.begin(), list.end(), data.begin());
             }
@@ -42,7 +42,7 @@ namespace newt::lib {
                 for (std::size_t i = 0; i < dim; ++i) {
                     arr[i] = static_cast<U>(data[i]);
                 }
-                return vector<U, dim>(std::move(arr));
+                return vector<U, dim>(arr);
             }
 
             // All vector operators
