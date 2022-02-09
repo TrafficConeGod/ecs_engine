@@ -3,7 +3,7 @@
 #include "lib/vector.hh"
 
 namespace newt::components {
-    struct rotational_transform_2d : public ecs::base_component<rotational_transform_2d> {
+    struct rotational_transform_2d : public ecs::base_entity_component<rotational_transform_2d> {
         lib::vector<float, 2> forward;
     };
 }

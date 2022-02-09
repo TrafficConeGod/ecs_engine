@@ -49,7 +49,7 @@ namespace newt::ecs {
                     throw std::runtime_error("component already exists");
                 }
                 auto component_copy = component;
-                component_copy.entity = index;
+                component_copy.entity_index = index;
                 // We add one since the index stored must be greater than 0
                 component_indices.at(C::ID) = db.get_component_set<C>().insert(component_copy) + 1;
             }

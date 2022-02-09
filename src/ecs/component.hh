@@ -14,6 +14,11 @@ namespace newt::ecs {
     };
 
     template<typename R>
+    struct base_entity_component : public base_component<base_entity_component<R>> {
+        std::size_t entity_index;
+    };
+
+    template<typename R>
     const std::size_t base_component<R>::ID(head_component::next_id());
 
     template<typename R>
