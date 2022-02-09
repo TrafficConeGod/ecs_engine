@@ -95,5 +95,44 @@ namespace newt::lib {
             inline iterator end() {
                 return iterator(containers.end(), containers.end());
             }
+
+            class const_iterator {
+                private:
+                    typename std::vector<value_container>::const_iterator it;
+                    typename std::vector<value_container>::const_iterator end;
+                public:
+                    inline const_iterator(const typename std::vector<value_container>::const_iterator& it_, const typename std::vector<value_container>::const_iterator& end_) : it(it_), end(end_) {}
+
+                    inline const_iterator& operator++() {
+                        it++;
+                        // If there is no value at the current location, then we need to increment until we find one
+                        while (it != end && !it->has_value) {
+                            it++;
+                        }
+                        return *this;
+                    }
+
+                    inline bool operator!=(const const_iterator& rhs) const {
+                        return it != rhs.it;
+                    }
+
+                    inline const T& operator*() {
+                        return it->value;
+                    }
+            };
+
+            inline const_iterator begin() const {
+                auto it = containers.begin();
+                auto end = containers.end();
+                // If there is no value at the current location, then we need to increment until we find one
+                while (it != end && !it->has_value) {
+                    it++;
+                }
+                return const_iterator(it, end);
+            }
+
+            inline const_iterator end() const {
+                return const_iterator(containers.end(), containers.end());
+            }
     };
 }

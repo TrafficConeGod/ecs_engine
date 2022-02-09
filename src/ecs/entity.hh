@@ -12,7 +12,7 @@ namespace newt::ecs {
         std::array<std::size_t, MAX_COMPONENTS> component_indices = {0};
 
         template<typename C>
-        const C& get_component_impl(database& db) const {
+        const C& get_component_impl(const database& db) const {
             if (!has_component<C>()) {
                 throw std::runtime_error("no component found");
             }
@@ -32,7 +32,7 @@ namespace newt::ecs {
 
             // Not inherently thread safe
             template<typename C>
-            inline const C& get_component(database& db) const {
+            inline const C& get_component(const database& db) const {
                 return get_component_impl<C>(db);
             }
 

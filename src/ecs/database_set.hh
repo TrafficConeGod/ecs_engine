@@ -69,11 +69,19 @@ namespace newt::ecs {
                 return inserted_indices;
             }
 
-            inline typename lib::indexed_set<T>::iterator begin() {
+            inline auto begin() {
                 return set.begin();
             }
 
-            inline typename lib::indexed_set<T>::iterator end() {
+            inline auto end() {
+                return set.end();
+            }
+
+            inline auto begin() const {
+                return set.begin();
+            }
+
+            inline auto end() const {
                 return set.end();
             }
     };

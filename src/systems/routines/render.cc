@@ -7,7 +7,7 @@
 using namespace newt;
 using namespace ecs;
 
-void systems::routines::render(database& db) {
+void systems::routines::render(const database& db) {
     for (auto& mesh : db.mesh_2d_set) {
         auto& entity = db.entity_set.at(mesh.entity_index);
         if (entity.has_component<components::rigid_transform_2d>()) {
