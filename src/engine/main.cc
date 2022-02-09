@@ -32,8 +32,11 @@ int main() {
     }
 
     lib::vector<float, 3> vec = {2, 3, 4};
-    vec *= 20.f;
+    vec *= 20.3f;
     vec.print();
+
+    lib::vector<int, 3> v2 = vec;
+    v2.print();
 
     return 0;
 }
