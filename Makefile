@@ -1,8 +1,8 @@
-OBJECTS = $(patsubst %.cc,%.o, $(shell find src/ -name *.cc))
+OBJECTS = $(patsubst %.cc,%.o, $(shell find ./ -name *.cc))
 CC = g++
-CFLAGS = -c -I src -Wall -std=c++17 -O2 -finline-functions -g
+CFLAGS = -c -I src -I lib -Wall -std=c++17 -O2 -finline-functions -g
 
-LDFLAGS = -pthread
+LDFLAGS = -pthread -lGL -lglut -lGLEW -lglfw -lm -lX11 -lpthread -lXi -lXrandr -ldl
 
 OUT_FILE = app.elf
 
