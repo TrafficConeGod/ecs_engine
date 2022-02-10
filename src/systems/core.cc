@@ -6,9 +6,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "shader.hh"
+#include "lib/timing.hh"
+#include <iostream>
 
 using namespace newt;
 using namespace ecs;
+
+namespace chrono = std::chrono;
 
 auto renderer_init() {
     if (!glfwInit()) {
@@ -58,8 +62,8 @@ auto renderer_init() {
 
 void systems::core(database* db_ptr) {
     auto& db = *db_ptr;
-    
     auto [win, program_id, vertex_id] = renderer_init();
+    auto clock = chrono::high_resolution_clock::now();
 
     for (;;) {
         std::scoped_lock lock(db.entity_set.mutex());
@@ -69,5 +73,10 @@ void systems::core(database* db_ptr) {
                 break;
             }
         }
+
+        auto delta_time = chrono::high_resolution_clock::now() - clock;
+        std::cout << "delta_time: " << chrono::duration_cast<lib::float_duration>(delta_time).count() << '\n';
+        lib::match_delta_time(lib::GAME_DELTA_TIME, delta_time);
+        clock = chrono::high_resolution_clock::now();
     }
 }
