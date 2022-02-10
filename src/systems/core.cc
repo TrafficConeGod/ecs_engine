@@ -10,10 +10,7 @@
 using namespace newt;
 using namespace ecs;
 
-void systems::core(database* db_ptr) {
-    auto& db = *db_ptr;
-    
-    // Init rendering
+auto renderer_init() {
     if (!glfwInit()) {
         throw std::runtime_error("Failed to initialize GLFW");
     }
@@ -46,6 +43,23 @@ void systems::core(database* db_ptr) {
     glGenBuffers(1, &vertex_id);
 
     auto program_id = load_shaders("res/shaders/vertex.glsl", "res/shaders/fragment.glsl");
+
+    struct result {
+        GLFWwindow* win;
+        GLuint program_id;
+        GLuint vertex_id;
+    };
+    return result{
+        win,
+        program_id,
+        vertex_id,
+    };
+}
+
+void systems::core(database* db_ptr) {
+    auto& db = *db_ptr;
+    
+    auto [win, program_id, vertex_id] = renderer_init();
 
     for (;;) {
         std::scoped_lock lock(db.entity_set.mutex());

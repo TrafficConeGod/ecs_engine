@@ -23,7 +23,12 @@ int main() {
         auto mesh_resource = std::make_shared<resources::mesh_2d>(std::vector<resources::mesh_2d::triangle>{
             resources::mesh_2d::triangle({
                 resources::mesh_2d::vertex{1.f, 1.f},
+                resources::mesh_2d::vertex{1.f, 0.f},
+                resources::mesh_2d::vertex{0.f, 0.f}
+            }),
+            resources::mesh_2d::triangle({
                 resources::mesh_2d::vertex{0.f, 1.f},
+                resources::mesh_2d::vertex{1.f, 1.f},
                 resources::mesh_2d::vertex{0.f, 0.f}
             })
         });
