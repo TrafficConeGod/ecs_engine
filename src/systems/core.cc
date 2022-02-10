@@ -13,6 +13,7 @@ using namespace newt;
 using namespace ecs;
 
 namespace chrono = std::chrono;
+using namespace std::chrono_literals;
 
 auto renderer_init() {
     if (!glfwInit()) {
@@ -63,7 +64,8 @@ auto renderer_init() {
 void systems::core(database* db_ptr) {
     auto& db = *db_ptr;
     auto [win, program_id, vertex_id] = renderer_init();
-    auto clock = chrono::high_resolution_clock::now();
+    auto clock = chrono::steady_clock::now();
+    std::chrono::nanoseconds delta_time(16ms);
 
     for (;;) {
         std::scoped_lock lock(db.entity_set.mutex());
@@ -74,9 +76,9 @@ void systems::core(database* db_ptr) {
             }
         }
 
-        auto delta_time = chrono::high_resolution_clock::now() - clock;
-        std::cout << "delta_time: " << chrono::duration_cast<lib::float_duration>(delta_time).count() << '\n';
-        lib::match_delta_time(lib::GAME_DELTA_TIME, delta_time);
-        clock = chrono::high_resolution_clock::now();
+        auto actual_delta_time = chrono::steady_clock::now() - clock;
+        lib::match_delta_time(lib::GAME_DELTA_TIME, actual_delta_time);
+        delta_time = chrono::steady_clock::now() - clock;
+        clock = chrono::steady_clock::now();
     }
 }
