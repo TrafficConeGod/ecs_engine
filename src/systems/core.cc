@@ -13,7 +13,6 @@ using namespace newt;
 using namespace ecs;
 
 namespace chrono = std::chrono;
-using namespace std::chrono_literals;
 
 auto renderer_init() {
     if (!glfwInit()) {
@@ -65,7 +64,7 @@ void systems::core(database* db_ptr) {
     auto& db = *db_ptr;
     auto [win, program_id, vertex_id] = renderer_init();
     auto clock = chrono::steady_clock::now();
-    std::chrono::nanoseconds delta_time(16ms);
+    std::chrono::nanoseconds delta_time(lib::GAME_DELTA_TIME);
 
     for (;;) {
         std::scoped_lock lock(db.entity_set.mutex());
