@@ -20,6 +20,10 @@ namespace newt::ecs {
             return db.get_component_set<C>().at(component_indices.at(C::ID) - 1);
         }
         public:
+            entity() = default;
+            // entity(const entity&) = delete;
+            // entity& operator=(const entity&) = delete;
+        
             inline std::size_t get_index() const { return index; }
             inline void set_index(std::size_t index) { this->index = index; }
 

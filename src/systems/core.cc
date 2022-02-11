@@ -47,6 +47,8 @@ auto renderer_init() {
     glGenBuffers(1, &vertex_id);
 
     auto program_id = load_shaders("res/shaders/vertex.glsl", "res/shaders/fragment.glsl");
+    auto position_uniform_id = glGetUniformLocation(program_id, "position");
+    auto scale_uniform_id = glGetUniformLocation(program_id, "scale");
 
     struct result {
         GLFWwindow* win;

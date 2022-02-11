@@ -16,7 +16,7 @@ constexpr const database_set<components::name>& get_component_set<components::na
 } \
 
 namespace newt::ecs {
-    struct entity;
+    class entity;
     struct database;
 
     // C++ template magic to get the component set from type
@@ -33,10 +33,10 @@ namespace newt::ecs {
 
         database() = default;
         database(const database&) = delete;
-        database(database&&) = delete;
         database& operator=(const database&) = delete;
 
         std::size_t create_entity();
+        std::size_t copy_entity(const entity& ent);
 
         template<typename C>
         constexpr const database_set<C>& get_component_set() const {
