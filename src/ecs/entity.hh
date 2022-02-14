@@ -1,73 +1,61 @@
 #pragma once
+#include "components_def.hh"
 #include "common.hh"
-#include "database.hh"
 #include <array>
 #include <stdexcept>
 
+#define MAKE_COMPONENT_POINTER(name) components::name* name##_ptr = nullptr;
+
 namespace newt::ecs {
+    struct database;
+
     class entity {
-        std::size_t index = 0;
-        
-        // If the value of a component index is 0 then this entity does not have that component, otherwise the actual index is subtracted by 1
-        std::array<std::size_t, MAX_COMPONENTS> component_indices = {0};
+        USE_MACRO_ON_COMPONENTS(MAKE_COMPONENT_POINTER)
 
         template<typename C>
-        const C& get_component_impl(const database& db) const {
-            if (!has_component<C>()) {
-                throw std::runtime_error("no component found");
-            }
-            // We subtract one since the index stored must be greater than 0
-            return db.get_component_set<C>().at(component_indices.at(C::ID) - 1);
+        const C*& get_component_impl() const;
+
+        template<typename C>
+        inline C*& get_mutable_component_impl() {
+            return const_cast<C*&>(get_component_impl<C>());
         }
         public:
             entity() = default;
-            // entity(const entity&) = delete;
-            // entity& operator=(const entity&) = delete;
+            entity(const entity&) = delete;
+            entity& operator=(const entity&) = delete;
         
-            inline std::size_t get_index() const { return index; }
-            inline void set_index(std::size_t index) { this->index = index; }
-
             // Not inherently thread safe
             template<typename C>
             inline bool has_component() const {
-                // If the value is 0, then the component is not present
-                return component_indices.at(C::ID) != 0;
+                return get_component_impl<C>() != nullptr;
             }
 
             // Not inherently thread safe
             template<typename C>
-            inline const C& get_component(const database& db) const {
-                return get_component_impl<C>(db);
-            }
-
-            // Not inherently thread safe
-            template<typename C>
-            inline C& get_component(database& db) {
-                return const_cast<C&>(get_component_impl<C>(db));
-            }
-
-            // Not inherently thread safe
-            template<typename C>
-            void set_component(database& db, const C& component) {
-                if (has_component<C>()) {
-                    throw std::runtime_error("component already exists");
-                }
-                auto component_copy = component;
-                component_copy.entity_index = index;
-                // We add one since the index stored must be greater than 0
-                component_indices.at(C::ID) = db.get_component_set<C>().insert(component_copy) + 1;
-            }
-
-            // Not inherently thread safe
-            template<typename C>
-            void erase_component(database& db) {
-                if (!has_component<C>()) {
+            inline const C* get_component() const {
+                auto& component_ptr = get_mutable_component_impl<C>();
+                if (component_ptr != nullptr) {
                     throw std::runtime_error("no component found");
                 }
-                // We subtract one since the index stored must be greater than 0
-                db.get_component_set<C>().erase_at(component_indices.at(C::ID) - 1);
-                // Resetting to the default value
-                component_indices.at(C::ID) = 0;
+                return get_component_impl<C>();
             }
+
+            // Not inherently thread safe
+            template<typename C>
+            inline C* get_component() {
+                auto& component_ptr = get_mutable_component_impl<C>();
+                if (component_ptr != nullptr) {
+                    throw std::runtime_error("no component found");
+                }
+                return get_mutable_component_impl<C>();
+            }
+
+            // Not inherently thread safe
+            template<typename C>
+            void set_component(database& db, const C& component);
+
+            // Not inherently thread safe
+            template<typename C>
+            void erase_component(database& db);
     };
 }

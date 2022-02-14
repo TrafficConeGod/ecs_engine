@@ -1,11 +1,7 @@
 #pragma once
+#include "components_def.hh"
 #include "database_set.hh"
-
-namespace newt::components {
-    struct rigid_transform_2d;
-    struct rotational_transform_2d;
-    struct mesh_2d;
-};
+#include "entity.hh"
 
 #define MAKE_COMPONENT_SET(name) database_set<components::name> name##_set;
 
@@ -16,42 +12,28 @@ constexpr const database_set<components::name>& get_component_set<components::na
 } \
 
 namespace newt::ecs {
-    class entity;
     struct database;
-
-    // C++ template magic to get the component set from type
-    namespace database_impl {
-        template<typename C>
-        constexpr const database_set<C>& get_component_set(const database& db);
-    }
 
     struct database {
         database_set<entity> entity_set;
-        MAKE_COMPONENT_SET(rigid_transform_2d)
-        MAKE_COMPONENT_SET(rotational_transform_2d)
-        MAKE_COMPONENT_SET(mesh_2d)
+        USE_MACRO_ON_COMPONENTS(MAKE_COMPONENT_SET)
 
         database() = default;
         database(const database&) = delete;
         database& operator=(const database&) = delete;
 
-        std::size_t create_entity();
-        std::size_t copy_entity(const entity& ent);
+        entity* copy_entity(const entity* ent);
 
         template<typename C>
         constexpr const database_set<C>& get_component_set() const {
-            return database_impl::get_component_set<C>(*this);
+            return get_component_set_impl<C>();
         }
         template<typename C>
         constexpr database_set<C>& get_component_set() {
-            return const_cast<database_set<C>&>(database_impl::get_component_set<C>(*this));
+            return const_cast<database_set<C>&>(get_component_set_impl<C>());
         }
+        private:
+            template<typename C>
+            constexpr const database_set<C>& get_component_set_impl() const;
     };
-
-    // Implementation of get_component_set
-    namespace database_impl {
-        MAKE_COMPONENT_TEMPLATE_ACCESS(rigid_transform_2d)
-        MAKE_COMPONENT_TEMPLATE_ACCESS(rotational_transform_2d)
-        MAKE_COMPONENT_TEMPLATE_ACCESS(mesh_2d)
-    }
 }
