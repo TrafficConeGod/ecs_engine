@@ -26,6 +26,7 @@ namespace newt::lib {
             inline std::size_t size() const { return containers.size(); }
 
             inline bool has_at(const std::size_t index) const {
+                // Make sure we are not out of bounds and that the value exists
                 return index < containers.size() && containers.at(index).has_value;
             }
 
@@ -38,11 +39,14 @@ namespace newt::lib {
             }
             
             void insert_at(const std::size_t index, T&& value) {
+                // If we don't have an index, get one
                 if (index >= containers.size()) {
+                    // Add the in between indices to the free indices
                     for (std::size_t i = containers.size(); i < index; i++) {
                         free_indices.push_back(i);
                     }
 
+                    // Resize and insert the value
                     containers.resize(index + 1);
                     auto& container = containers.at(index);
                     container = { .has_value = true, .value = std::move(value) };
