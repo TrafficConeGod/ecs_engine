@@ -39,6 +39,10 @@ namespace newt::lib {
             
             void insert_at(const std::size_t index, T&& value) {
                 if (index >= containers.size()) {
+                    for (std::size_t i = containers.size(); i < index; i++) {
+                        free_indices.push_back(i);
+                    }
+
                     containers.resize(index + 1);
                     auto& container = containers.at(index);
                     container = { .has_value = true, .value = std::move(value) };
