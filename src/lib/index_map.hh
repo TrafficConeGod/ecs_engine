@@ -37,18 +37,36 @@ namespace newt::lib {
                 return const_cast<T&>(at_impl(index));
             }
             
-            std::size_t insert_at(const std::size_t index, const T& value);
+            void insert_at(const std::size_t index, T&& value) {
+                if (index >= containers.size()) {
+                    // Fun
+                    throw std::runtime_error("not supported");
+                } else {
+                    auto& container = containers.at(index);
+                    if (container.has_value) {
+                        throw std::runtime_error("value already exists");
+                    }
+                    container = { .has_value = true, .value = std::move(value) };
+                }
+            }
         
-            std::size_t insert(const T& value) {
+            std::size_t insert(T&& value) {
                 // If we have a free index, use one of them
                 if (free_indices.size() > 0) {
-                    auto index = free_indices.back();
-                    free_indices.pop_back();
-                    containers.at(index) = { .has_value = true, .value = value };
-                    return index;
+                    for (;;) {
+                        auto index = free_indices.back();
+                        free_indices.pop_back();
+                        auto& container = containers.at(index);
+                        // Since not all free indices are actually free we need to check if the container is empty (this is because of insert_at)
+                        if (container.has_value) {
+                            continue;
+                        }
+                        container = { .has_value = true, .value = std::move(value) };
+                        return index;
+                    }
                 } else {
                     auto index = containers.size();
-                    containers.push_back({ .has_value = true, .value = value });
+                    containers.push_back({ .has_value = true, .value = std::move(value) });
                     return index;
                 }
             }
