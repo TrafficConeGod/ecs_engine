@@ -1,18 +1,21 @@
 #pragma once
 #include "plf_colony.hh"
+#include <memory>
 #include <mutex>
 #include <stdexcept>
 
 namespace newt::ecs {
+    // Dont normally copy this
     template<typename T>
-    class database_set {
-        std::mutex mutex_;
+    class database_colony {
+        // Ugly hack to make this copy constructible
+        std::shared_ptr<std::mutex> mutex_ = std::make_shared<std::mutex>();
         plf::colony<T> set;
         bool listening_for_inserted_values_ = false;
         std::vector<T*> inserted_values;
         public:
             inline std::mutex& mutex() {
-                return mutex_;
+                return *mutex_;
             }
 
             // Whether or not to listen for insertion and add the values to the inserted_values vector
@@ -37,7 +40,7 @@ namespace newt::ecs {
                 if (listening_for_inserted_values_) {
                     // Since std::erase_if would be less efficient, we have to do it manually
                     for (auto it = inserted_values.begin(); it != inserted_values.end(); ++it) {
-                        if (*it == index) {
+                        if (*it == value) {
                             inserted_values.erase(it);
                             break;
                         }
@@ -50,7 +53,7 @@ namespace newt::ecs {
                 inserted_values.clear();
             }
 
-            std::vector<std::size_t> copy_inserted_values() const {
+            std::vector<T*> copy_inserted_values() const {
                 if (!listening_for_inserted_values_) {
                     throw std::runtime_error("listening_for_inserted_values must be true to use this function");
                 }

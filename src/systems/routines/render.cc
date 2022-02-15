@@ -9,12 +9,12 @@
 using namespace newt;
 using namespace ecs;
 
-bool systems::routines::render(const database& db, GLFWwindow* win, GLuint program_id, GLuint vertex_id) {
+bool systems::routines::render(const database& db, GLFWwindow* const win, const GLuint program_id, const GLuint vertex_id) {
     glUseProgram(program_id);
-    for (auto& mesh : db.mesh_2d_set) {
-        auto& entity = db.entity_set.at(mesh.entity_index);
+    for (auto& mesh : db.components<components::mesh_2d>()) {
+        auto& entity = *mesh.entity_ptr;
         if (entity.has_component<components::rigid_transform_2d>()) {
-            auto& rtf = entity.get_component<components::rigid_transform_2d>(db);
+            auto& rtf = *entity.component<components::rigid_transform_2d>();
 
             auto& triangles = mesh.resource->triangles();
             

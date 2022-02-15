@@ -4,5 +4,5 @@
 #include <GLFW/glfw3.h>
 
 namespace newt::systems::routines {
-    bool render(const ecs::database& db, GLFWwindow* window, GLuint program_id, GLuint vertex_id);
+    bool render(const ecs::database& db, GLFWwindow* const window, GLuint const program_id, GLuint const vertex_id);
 };

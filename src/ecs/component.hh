@@ -1,6 +1,6 @@
 #pragma once
 #include <cstddef>
-#include "database_set.hh"
+#include "entity.hh"
 
 namespace newt::ecs {
     struct head_component {
@@ -14,11 +14,9 @@ namespace newt::ecs {
         static const std::size_t SIZE;
     };
 
-    class entity;
-
     template<typename R>
     struct base_entity_component : public base_component<base_entity_component<R>> {
-        entity* ent;
+        entity* entity_ptr;
     };
 
     template<typename R>

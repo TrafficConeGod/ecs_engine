@@ -1,7 +1,5 @@
 #include "ecs/entity.hh"
-#include "resources/mesh_2d.hh"
 #include "components/rigid_transform_2d.hh"
-#include "components/rotational_transform_2d.hh"
 #include "components/mesh_2d.hh"
 #include "lib/vector.hh"
 #include "systems/core.hh"
@@ -12,11 +10,13 @@ using namespace ecs;
 
 int main() {
     database db;
+    db.add_component_type<components::rigid_transform_2d>();
+    db.add_component_type<components::mesh_2d>();
 
     {
-        std::scoped_lock lock(db.entity_set.mutex(), db.rigid_transform_2d_set.mutex(), db.mesh_2d_set.mutex());
-        auto& e = db.entity_set.at(db.create_entity());
-        e.set_component(db, components::rigid_transform_2d{
+        std::scoped_lock lock(db.entities().mutex(), db.components<components::rigid_transform_2d>().mutex(), db.components<components::mesh_2d>().mutex());
+        auto& ent = *db.create_entity();
+        ent.set_component(db, components::rigid_transform_2d{
             .position = {1.f, 1.f},
             .scale = {1.f, 1.618033988749894f}
         });
@@ -32,14 +32,9 @@ int main() {
                 resources::mesh_2d::vertex{0.f, 0.f}
             })
         });
-        e.set_component(db, components::mesh_2d{
+        ent.set_component(db, components::mesh_2d{
             .resource = mesh_resource
         });
-        auto& e2 = db.entity_set.at(db.copy_entity(e));
-        e2.get_component<components::rigid_transform_2d>(db) = {
-            .position = {0.f, 0.f},
-            .scale = {1.f, 1.1f}
-        };
     }
 
     lib::jthread w1(systems::core, &db);

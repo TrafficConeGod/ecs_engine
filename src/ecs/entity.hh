@@ -1,53 +1,50 @@
 #pragma once
-#include "components_def.hh"
-#include "common.hh"
 #include <array>
 #include <stdexcept>
-
-#define MAKE_COMPONENT_POINTER(name) components::name* name##_ptr = nullptr;
+#include "lib/index_map.hh"
+#include "database_colony.hh"
+#include <memory>
+#include <any>
 
 namespace newt::ecs {
-    struct database;
+    class database;
 
     class entity {
-        USE_MACRO_ON_COMPONENTS(MAKE_COMPONENT_POINTER)
+        lib::index_map<std::any> components;
 
         template<typename C>
-        const C*& get_component_impl() const;
+        inline const C* component_impl() const {
+            return std::any_cast<const C*>(components.at(C::ID));
+        }
 
         template<typename C>
-        inline C*& get_mutable_component_impl() {
-            return const_cast<C*&>(get_component_impl<C>());
+        inline C* mutable_component_impl() {
+            return std::any_cast<C*>(components.at(C::ID));
         }
         public:
             entity() = default;
-            entity(const entity&) = delete;
-            entity& operator=(const entity&) = delete;
+            // entity(const entity&) = delete;
+            // entity& operator=(const entity&) = delete;
         
             // Not inherently thread safe
             template<typename C>
             inline bool has_component() const {
-                return get_component_impl<C>() != nullptr;
+                return components.has_at(C::ID) && component_impl<C>() != nullptr;
             }
 
             // Not inherently thread safe
             template<typename C>
-            inline const C* get_component() const {
-                auto& component_ptr = get_mutable_component_impl<C>();
-                if (component_ptr != nullptr) {
+            inline const C* component() const {
+                if (!has_component<C>()) {
                     throw std::runtime_error("no component found");
                 }
-                return get_component_impl<C>();
+                return component_impl<C>();
             }
 
             // Not inherently thread safe
             template<typename C>
-            inline C* get_component() {
-                auto& component_ptr = get_mutable_component_impl<C>();
-                if (component_ptr != nullptr) {
-                    throw std::runtime_error("no component found");
-                }
-                return get_mutable_component_impl<C>();
+            inline C* component() {
+                return const_cast<C*>(component<C>());
             }
 
             // Not inherently thread safe

@@ -1,39 +1,44 @@
 #pragma once
-#include "components_def.hh"
-#include "database_set.hh"
+#include "lib/index_map.hh"
+#include "database_colony.hh"
 #include "entity.hh"
-
-#define MAKE_COMPONENT_SET(name) database_set<components::name> name##_set;
-
-#define MAKE_COMPONENT_TEMPLATE_ACCESS(name) \
-template<> \
-constexpr const database_set<components::name>& get_component_set<components::name>(const database& db) { \
-    return db.name##_set; \
-} \
+#include <memory>
+#include <any>
 
 namespace newt::ecs {
-    struct database;
+    class database;
 
-    struct database {
-        database_set<entity> entity_set;
-        USE_MACRO_ON_COMPONENTS(MAKE_COMPONENT_SET)
-
-        database() = default;
-        database(const database&) = delete;
-        database& operator=(const database&) = delete;
-
-        entity* copy_entity(const entity* ent);
+    class database {
+        database_colony<entity> entities_;
+        lib::index_map<std::unique_ptr<std::any>> component_colonies;
 
         template<typename C>
-        constexpr const database_set<C>& get_component_set() const {
-            return get_component_set_impl<C>();
+        inline const database_colony<C>& components_impl() const {
+            return std::any_cast<const database_colony<C>&>(*component_colonies.at(C::ID));
         }
-        template<typename C>
-        constexpr database_set<C>& get_component_set() {
-            return const_cast<database_set<C>&>(get_component_set_impl<C>());
-        }
-        private:
+
+        public:
+            database() = default;
+            database(const database&) = delete;
+            database& operator=(const database&) = delete;
+
             template<typename C>
-            constexpr const database_set<C>& get_component_set_impl() const;
+            inline void add_component_type() {
+                component_colonies.insert(C::ID, std::make_unique<std::any>(database_colony<C>()));
+            }
+
+            inline const database_colony<entity>& entities() const { return entities_; }
+            inline database_colony<entity>& entities() { return entities_; }
+            inline entity* create_entity() {
+                return &(*entities_.insert({}));
+            }
+            entity* copy_entity(const entity* ent);
+
+            template<typename C>
+            inline const database_colony<C>& components() const { return components_impl<C>(); }
+            template<typename C>
+            inline database_colony<C>& components() { return const_cast<database_colony<C>&>(components_impl<C>()); }
     };
 }
+
+#include "entity.inl"
