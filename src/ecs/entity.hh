@@ -10,16 +10,16 @@ namespace newt::ecs {
     class database;
 
     class entity {
-        lib::index_map<std::any> components;
+        lib::index_map<void*> components;
 
         template<typename C>
         inline const C* component_impl() const {
-            return std::any_cast<const C*>(components.at(C::ID));
+            return (const C*)components.at(C::ID);
         }
 
         template<typename C>
         inline C* mutable_component_impl() {
-            return std::any_cast<C*>(components.at(C::ID));
+            return (C*)components.at(C::ID);
         }
         public:
             entity() = default;
@@ -29,7 +29,7 @@ namespace newt::ecs {
             // Not inherently thread safe
             template<typename C>
             inline bool has_component() const {
-                return components.has_at(C::ID) && component_impl<C>() != nullptr;
+                return components.has_at(C::ID);
             }
 
             // Not inherently thread safe
@@ -44,7 +44,10 @@ namespace newt::ecs {
             // Not inherently thread safe
             template<typename C>
             inline C* component() {
-                return const_cast<C*>(component<C>());
+                if (!has_component<C>()) {
+                    throw std::runtime_error("no component found");
+                }
+                return mutable_component_impl<C>();
             }
 
             // Not inherently thread safe

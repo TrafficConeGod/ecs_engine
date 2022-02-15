@@ -15,7 +15,7 @@ namespace newt::lib {
         std::vector<value_container> containers;
         std::list<std::size_t> free_indices;
 
-        const T& at_impl(std::size_t index) const {
+        const T& at_impl(const std::size_t index) const {
             auto& container = containers.at(index);
             if (!container.has_value) {
                 throw std::out_of_range("value not found");
@@ -25,29 +25,29 @@ namespace newt::lib {
         public:
             inline std::size_t size() const { return containers.size(); }
 
-            inline bool has_at(std::size_t index) const {
+            inline bool has_at(const std::size_t index) const {
                 return containers.at(index).has_value;
             }
 
-            inline const T& at(std::size_t index) const {
+            inline const T& at(const std::size_t index) const {
                 return at_impl(index);
             }
 
-            inline T& at(std::size_t index) {
+            inline T& at(const std::size_t index) {
                 return const_cast<T&>(at_impl(index));
             }
             
-            std::size_t insert(const std::size_t index, const T& value);
+            std::size_t insert_at(const std::size_t index, const T& value);
         
             std::size_t insert(const T& value) {
                 // If we have a free index, use one of them
                 if (free_indices.size() > 0) {
-                    std::size_t index = free_indices.back();
+                    auto index = free_indices.back();
                     free_indices.pop_back();
                     containers.at(index) = { .has_value = true, .value = value };
                     return index;
                 } else {
-                    std::size_t index = containers.size();
+                    auto index = containers.size();
                     containers.push_back({ .has_value = true, .value = value });
                     return index;
                 }
