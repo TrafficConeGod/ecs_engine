@@ -26,7 +26,7 @@ namespace newt::lib {
             inline std::size_t size() const { return containers.size(); }
 
             inline bool has_at(const std::size_t index) const {
-                return containers.at(index).has_value;
+                return index < containers.size() && containers.at(index).has_value;
             }
 
             inline const T& at(const std::size_t index) const {
@@ -39,8 +39,9 @@ namespace newt::lib {
             
             void insert_at(const std::size_t index, T&& value) {
                 if (index >= containers.size()) {
-                    // Fun
-                    throw std::runtime_error("not supported");
+                    containers.resize(index + 1);
+                    auto& container = containers.at(index);
+                    container = { .has_value = true, .value = std::move(value) };
                 } else {
                     auto& container = containers.at(index);
                     if (container.has_value) {

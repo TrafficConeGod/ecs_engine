@@ -4,6 +4,8 @@ namespace newt::lib {
     class any_ptr {
         void* ptr;
         public:
+            inline any_ptr() : ptr(nullptr) {}
+
             template<typename T>
             inline any_ptr(T* ptr_) : ptr(ptr_) {}
 

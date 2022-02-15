@@ -1,5 +1,6 @@
 #include "ecs/entity.hh"
 #include "components/rigid_transform_2d.hh"
+#include "components/rotational_transform_2d.hh"
 #include "components/mesh_2d.hh"
 #include "lib/vector.hh"
 #include "systems/core.hh"
@@ -11,6 +12,7 @@ using namespace ecs;
 int main() {
     database db;
     db.add_component_type<components::rigid_transform_2d>();
+    db.add_component_type<components::rotational_transform_2d>();
     db.add_component_type<components::mesh_2d>();
 
     {
