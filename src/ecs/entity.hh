@@ -4,22 +4,22 @@
 #include "lib/index_map.hh"
 #include "database_colony.hh"
 #include <memory>
-#include <any>
+#include "lib/any_ptr.hh"
 
 namespace newt::ecs {
     class database;
 
     class entity {
-        lib::index_map<void*> components;
+        lib::index_map<lib::any_ptr> components;
 
         template<typename C>
         inline const C* component_impl() const {
-            return (const C*)components.at(C::ID);
+            return components.at(C::ID).template get<C>();
         }
 
         template<typename C>
         inline C* mutable_component_impl() {
-            return (C*)components.at(C::ID);
+            return components.at(C::ID).template get<C>();
         }
         public:
             entity() = default;
