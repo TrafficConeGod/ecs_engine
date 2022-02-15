@@ -24,7 +24,7 @@ namespace newt::ecs {
 
             template<typename C>
             inline void add_component_type() {
-                component_colonies.insert(C::ID, std::make_unique<std::any>(database_colony<C>()));
+                component_colonies.insert_at(C::ID, std::make_unique<std::any>(database_colony<C>()));
             }
 
             inline const database_colony<entity>& entities() const { return entities_; }

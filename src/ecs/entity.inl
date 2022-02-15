@@ -9,7 +9,7 @@ void newt::ecs::entity::set_component(database& db, const C& component) {
     auto component_copy = component;
     component_copy.entity_ptr = this;
     auto component_ptr = db.components<C>().insert(component_copy);
-    components.insert(C::ID, component_ptr);
+    components.insert_at(C::ID, component_ptr);
 }
 
 template<typename C>

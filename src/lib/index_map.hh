@@ -55,9 +55,9 @@ namespace newt::lib {
 
             void erase_at(const std::size_t index) {
                 auto& container = containers.at(index);
-                if (container.has_value) {
-                    auto moved = std::move(container);
-                }
+                // if (container.has_value) {
+                //     auto moved = std::move(container);
+                // }
                 container.has_value = false;
                 // Add a new free index
                 free_indices.push_back(index);

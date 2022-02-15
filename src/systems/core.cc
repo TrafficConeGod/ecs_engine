@@ -7,6 +7,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "shader.hh"
 #include "lib/timing.hh"
+#include "components/mesh_2d.hh"
+#include "components/rigid_transform_2d.hh"
+#include "components/rotational_transform_2d.hh"
 #include <iostream>
 
 using namespace newt;
@@ -69,9 +72,9 @@ void systems::core(database* db_ptr) {
     chrono::nanoseconds delta_time(lib::GAME_DELTA_TIME);
 
     for (;;) {
-        std::scoped_lock lock(db.entity_set.mutex());
+        std::scoped_lock lock(db.entities().mutex());
         {
-            std::scoped_lock lock2(db.rigid_transform_2d_set.mutex(), db.rotational_transform_2d_set.mutex(), db.mesh_2d_set.mutex());
+            std::scoped_lock lock2(db.components<components::rigid_transform_2d>().mutex(), db.components<components::rotational_transform_2d>().mutex(), db.components<components::mesh_2d>().mutex());
             if (!systems::routines::render(db, win, program_id, vertex_id)) {
                 break;
             }
