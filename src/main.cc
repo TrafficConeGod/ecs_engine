@@ -1,7 +1,6 @@
 #include "ecs/entity.hh"
 #include "engine/database.hh"
 #include "engine/components/rigid_transform_2d.hh"
-#include "engine/components/rotational_transform_2d.hh"
 #include "engine/components/mesh_2d.hh"
 #include "lib/vector.hh"
 #include "engine/systems/core.hh"
