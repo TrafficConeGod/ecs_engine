@@ -4,6 +4,7 @@
 #include "lib/vector.hh"
 #include "engine/systems/core.hh"
 #include "lib/jthread.hh"
+#include <fmt/core.h>
 
 using namespace newt;
 using namespace engine;
