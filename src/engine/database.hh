@@ -19,6 +19,9 @@ namespace newt::engine {
     class database : public ecs::database {
         NEWT_ENGINE_USE_MACRO_ON_COMPONENTS(MAKE_COMPONENT_COLONY)
         OVERRIDE_COMPONENTS_TEMPLATE
+        public:
+            void erase_entity(ecs::entity* ent);
+            ecs::entity* copy_entity(const ecs::entity& ent);
     };
 }
 

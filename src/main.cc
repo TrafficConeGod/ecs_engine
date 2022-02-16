@@ -15,7 +15,7 @@ int main() {
 
     {
         std::scoped_lock lock(db.entities().mutex(), db.components<components::rigid_transform_2d>().mutex(), db.components<components::mesh_2d>().mutex());
-        auto& ent = *db.create_entity();
+        auto& ent = *db.insert_entity();
         ent.set_component(db, components::rigid_transform_2d{
             .position = {1.f, 1.f},
             .scale = {1.f, 1.618033988749894f}
@@ -36,7 +36,7 @@ int main() {
             .resource = mesh_resource
         });
 
-        
+        db.erase_entity(&ent);
     }
 
     lib::jthread w1(systems::core, &db);

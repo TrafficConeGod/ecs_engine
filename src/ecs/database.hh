@@ -33,14 +33,14 @@ namespace newt::ecs {
 
             inline const database_colony<entity>& entities() const { return entities_; }
             inline database_colony<entity>& entities() { return entities_; }
-            inline entity* create_entity() {
+            inline entity* insert_entity() {
                 return &(*entities_.insert({}));
             }
-            inline void destroy_entity(entity* ent) {
+            inline void erase_entity(entity* ent) {
                 entities_.erase(ent);
             }
             inline entity* copy_entity(const entity& ent) {
-                return create_entity();
+                return insert_entity();
             }
 
             template<typename C>
