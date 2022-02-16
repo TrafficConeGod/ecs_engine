@@ -10,12 +10,6 @@ OUT_FILE = libnewt.so
 build: $(OBJECTS)
 	$(CC) -shared -o $(OUT_FILE) $(OBJECTS) $(LDFLAGS)
 
-run: build
-	./$(OUT_FILE)
-
-pipe_run: build
-	./$(OUT_FILE) > debug.out
-
 %.o: %.cc
 	$(CC) $(CFLAGS) $< -o $@
 

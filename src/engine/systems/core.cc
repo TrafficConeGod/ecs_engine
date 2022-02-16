@@ -10,7 +10,6 @@
 #include "engine/components/mesh_2d.hh"
 #include "engine/components/rigid_transform_2d.hh"
 #include "engine/components/rotational_transform_2d.hh"
-#include <iostream>
 
 using namespace newt;
 using namespace engine;

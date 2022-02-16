@@ -1,7 +1,8 @@
 #pragma once
 #include <array>
-#include <iostream>
 #include <cmath>
+#include <fmt/core.h>
+#include <fmt/ranges.h>
 
 namespace newt::lib {
     template<typename T, std::size_t dim>
@@ -20,13 +21,9 @@ namespace newt::lib {
             inline T z() const { return data.at(2); }
             inline T w() const { return data.at(3); }
 
-            inline void print() const {
-                for (std::size_t i = 0; i < dim; ++i) {
-                    std::cout << data[i];
-                    if (i != dim - 1) {
-                        std::cout << ", ";
-                    }
-                }
+            template<typename format_context>
+            constexpr auto format(format_context& ctx) const {
+                return fmt::format_to(ctx.out(), "{}", data);
             }
 
             template<typename U>
@@ -62,3 +59,14 @@ namespace newt::lib {
             vector<T, dim> operator /(T scalar) const { auto copy = *this; for (auto& val : copy.data) { val /= scalar; } return copy; }
     };
 }
+
+template<typename T, std::size_t dim>
+struct fmt::formatter<newt::lib::vector<T, dim>> {
+    template<typename parse_context>
+    constexpr auto parse(parse_context& ctx) { return ctx.begin(); }
+    
+    template<typename format_context>
+    constexpr auto format(const newt::lib::vector<T, dim>& vec, format_context& ctx) {
+        return vec.format(ctx);
+    }
+};

@@ -1,5 +1,4 @@
 #include "timing.hh"
-#include <iostream>
 
 using namespace newt;
 namespace chrono = std::chrono;
