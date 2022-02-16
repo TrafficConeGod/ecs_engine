@@ -1,14 +1,14 @@
-OBJECTS = $(patsubst %.cc,%.o, $(shell find ./ -name *.cc))
+OBJECTS = $(patsubst %.cc,%.o, $(shell find ./src/ ./lib/ -name *.cc))
 CC = g++
-CFLAGS = -c -I src -I lib -Wall -std=c++17 -O2 -finline-functions -g
+CFLAGS = -c -I src -I lib -Wall -std=c++17 -O2 -finline-functions -fPIC
 
 LDFLAGS = -pthread -lGL -lglut -lGLEW -lglfw -lm -lX11 -lpthread -lXi -lXrandr -ldl
 
-OUT_FILE = app.elf
+OUT_FILE = libnewt.so
 
 .PHONY: build
 build: $(OBJECTS)
-	$(CC) -o $(OUT_FILE) $(OBJECTS) $(LDFLAGS)
+	$(CC) -shared -o $(OUT_FILE) $(OBJECTS) $(LDFLAGS)
 
 run: build
 	./$(OUT_FILE)
