@@ -36,6 +36,7 @@ int main() {
             .resource = mesh_resource
         });
 
+        db.copy_entity(ent);
         db.erase_entity(&ent);
     }
 
