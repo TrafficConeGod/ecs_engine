@@ -7,6 +7,17 @@
 
 #define MAKE_COMPONENT_COLONY(name) newt::ecs::database_colony<components::name> name##_colony;
 
+#define OVERRIDE_COMPONENTS_TEMPLATE \
+protected: \
+    template<typename C> \
+    const newt::ecs::database_colony<C>& components_impl() const; \
+public: \
+    template<typename C> \
+    constexpr const newt::ecs::database_colony<C>& components() const { return components_impl<C>(); } \
+    template<typename C> \
+    constexpr newt::ecs::database_colony<C>& components() { return const_cast<newt::ecs::database_colony<C>&>(components_impl<C>()); }
+
+
 namespace newt::ecs {
     class database;
 

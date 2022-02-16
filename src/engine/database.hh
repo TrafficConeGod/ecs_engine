@@ -18,14 +18,7 @@ constexpr const newt::ecs::database_colony<newt::engine::components::name>& newt
 namespace newt::engine {
     class database : public ecs::database {
         NEWT_ENGINE_USE_MACRO_ON_COMPONENTS(MAKE_COMPONENT_COLONY)
-        protected:
-            template<typename C>
-            const ecs::database_colony<C>& components_impl() const;
-        public:
-            template<typename C>
-            constexpr const ecs::database_colony<C>& components() const { return components_impl<C>(); }
-            template<typename C>
-            constexpr ecs::database_colony<C>& components() { return const_cast<ecs::database_colony<C>&>(components_impl<C>()); }
+        OVERRIDE_COMPONENTS_TEMPLATE
     };
 }
 
