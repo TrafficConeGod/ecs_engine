@@ -5,10 +5,7 @@
 #include "database_colony.hh"
 #include <memory>
 #include "lib/any_ptr.hh"
-
 namespace newt::ecs {
-    class database;
-
     class entity {
         lib::index_map<lib::any_ptr> components;
 
@@ -25,7 +22,7 @@ namespace newt::ecs {
             entity() = default;
             // entity(const entity&) = delete;
             // entity& operator=(const entity&) = delete;
-        
+
             // Not inherently thread safe
             template<typename C>
             inline bool has_component() const {
@@ -51,11 +48,26 @@ namespace newt::ecs {
             }
 
             // Not inherently thread safe
-            template<typename C>
-            void set_component(database& db, const C& component);
+            template<typename C, typename D>
+            void set_component(D& db, const C& component) {
+                if (has_component<C>()) {
+                    db.template components<C>().erase(mutable_component_impl<C>());
+                    components.erase_at(C::ID);
+                }
+                auto component_copy = component;
+                component_copy.entity_ptr = this;
+                auto component_ptr = db.template components<C>().insert(component_copy);
+                components.insert_at(C::ID, component_ptr);
+            }
 
             // Not inherently thread safe
-            template<typename C>
-            void erase_component(database& db);
+            template<typename C, typename D>
+            void erase_component(D& db) {
+                if (!has_component<C>()) {
+                    throw std::runtime_error("no component found");
+                }
+                db.template components<C>().erase(mutable_component_impl<C>());
+                components.erase_at(C::ID);
+            }
     };
 }

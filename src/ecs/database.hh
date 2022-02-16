@@ -5,40 +5,36 @@
 #include <memory>
 #include <any>
 
+#define MAKE_COMPONENT_COLONY(name) newt::ecs::database_colony<components::name> name##_colony;
+
 namespace newt::ecs {
     class database;
 
     class database {
         database_colony<entity> entities_;
-        lib::index_map<std::unique_ptr<std::any>> component_colonies;
-
-        template<typename C>
-        inline const database_colony<C>& components_impl() const {
-            return std::any_cast<const database_colony<C>&>(*component_colonies.at(C::ID));
-        }
-
+        protected:
+            template<typename C>
+            const database_colony<C>& components_impl() const;
         public:
             database() = default;
             database(const database&) = delete;
             database& operator=(const database&) = delete;
-
-            template<typename C>
-            inline void add_component_type() {
-                component_colonies.insert_at(C::ID, std::make_unique<std::any>(database_colony<C>()));
-            }
 
             inline const database_colony<entity>& entities() const { return entities_; }
             inline database_colony<entity>& entities() { return entities_; }
             inline entity* create_entity() {
                 return &(*entities_.insert({}));
             }
-            entity* copy_entity(const entity* ent);
+            inline void destroy_entity(entity* ent) {
+                entities_.erase(ent);
+            }
+            inline entity* copy_entity(const entity& ent) {
+                return create_entity();
+            }
 
             template<typename C>
-            inline const database_colony<C>& components() const { return components_impl<C>(); }
+            constexpr const database_colony<C>& components() const { return components_impl<C>(); }
             template<typename C>
-            inline database_colony<C>& components() { return const_cast<database_colony<C>&>(components_impl<C>()); }
+            constexpr database_colony<C>& components() { return const_cast<database_colony<C>&>(components_impl<C>()); }
     };
 }
-
-#include "entity.inl"

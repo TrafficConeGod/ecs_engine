@@ -7,13 +7,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "shader.hh"
 #include "lib/timing.hh"
-#include "components/mesh_2d.hh"
-#include "components/rigid_transform_2d.hh"
-#include "components/rotational_transform_2d.hh"
+#include "engine/components/mesh_2d.hh"
+#include "engine/components/rigid_transform_2d.hh"
+#include "engine/components/rotational_transform_2d.hh"
 #include <iostream>
 
 using namespace newt;
-using namespace ecs;
+using namespace engine;
 
 namespace chrono = std::chrono;
 

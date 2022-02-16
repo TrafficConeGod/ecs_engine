@@ -4,7 +4,7 @@
 #include <vector>
 #include <initializer_list>
 
-namespace newt::resources {
+namespace newt::engine::resources {
     class mesh_2d {
         public:
             using vertex = lib::vector<float, 2>;
