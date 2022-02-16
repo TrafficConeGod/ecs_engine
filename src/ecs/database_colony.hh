@@ -10,7 +10,7 @@ namespace newt::ecs {
     class database_colony {
         // Ugly hack to make this copy constructible
         std::shared_ptr<std::mutex> mutex_ = std::make_shared<std::mutex>();
-        plf::colony<T> set;
+        plf::colony<T> colony;
         bool listening_for_inserted_values_ = false;
         std::vector<T*> inserted_values;
         public:
@@ -23,15 +23,15 @@ namespace newt::ecs {
                 return listening_for_inserted_values_;
             }
 
-            inline std::size_t size() const { return set.size(); }
+            inline std::size_t size() const { return colony.size(); }
         
             T* insert(const T& value) {
                 // If we are listening for inserted values, add the index to the inserted_values vector
                 if (listening_for_inserted_values_) {
-                    inserted_values.push_back(&(*set.insert(value)));
+                    inserted_values.push_back(&(*colony.insert(value)));
                     return inserted_values.back();
                 } else {
-                    return &(*set.insert(value));
+                    return &(*colony.insert(value));
                 }
             }
 
@@ -46,7 +46,7 @@ namespace newt::ecs {
                         }
                     }
                 }
-                set.erase(set.get_iterator(value));
+                colony.erase(colony.get_iterator(value));
             }
 
             void clear_inserted_values() {
@@ -61,19 +61,19 @@ namespace newt::ecs {
             }
 
             inline auto begin() {
-                return set.begin();
+                return colony.begin();
             }
 
             inline auto end() {
-                return set.end();
+                return colony.end();
             }
 
             inline auto begin() const {
-                return set.begin();
+                return colony.begin();
             }
 
             inline auto end() const {
-                return set.end();
+                return colony.end();
             }
     };
 }
