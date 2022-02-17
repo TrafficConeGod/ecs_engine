@@ -2,7 +2,7 @@ OBJECTS = $(patsubst %.cc,%.o, $(shell find ./ -name *.cc))
 CC = g++
 CFLAGS = -c -I ../../src -I ../../lib -I . -Wall -std=c++17 -O2 -finline-functions -g
 
-LDFLAGS = -L. -pthread -lnewt -lfmt -Wl,-rpath='$$ORIGIN'
+LDFLAGS = -L../../ -pthread -lnewt -lfmt -Wl,-rpath='$$ORIGIN/../../'
 
 OUT_FILE = app.elf
 
