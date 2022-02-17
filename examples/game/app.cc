@@ -19,6 +19,10 @@ int main() {
             .position = {1.f, 1.f},
             .scale = {1.f, 1.618033988749894f}
         });
+        auto shader_resource = std::make_shared<resources::shader>("shaders/default/vertex.glsl", "shaders/fragment.glsl", std::initializer_list<std::string_view>{});
+        ent.set_component(db, components::shader{
+            .resource = shader_resource
+        });
         auto mesh_resource = std::make_shared<resources::mesh_2d>(std::vector<resources::mesh_2d::triangle>{
             resources::mesh_2d::triangle({
                 resources::mesh_2d::vertex{1.f, 1.f},
