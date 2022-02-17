@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "shader.hh"
+#include "shader_util.hh"
 #include "lib/timing.hh"
 #include "engine/components/mesh_2d.hh"
 #include "engine/components/rigid_transform_2d.hh"
@@ -16,7 +16,7 @@ using namespace engine;
 
 namespace chrono = std::chrono;
 
-auto renderer_init() {
+auto renderer_init(database& db) {
     if (!glfwInit()) {
         throw std::runtime_error("Failed to initialize GLFW");
     }
@@ -48,33 +48,40 @@ auto renderer_init() {
     GLuint vertex_id = 0;
     glGenBuffers(1, &vertex_id);
 
-    auto program_id = load_shaders("res/shaders/vertex.glsl", "res/shaders/fragment.glsl");
-    auto position_uniform_id = glGetUniformLocation(program_id, "position");
-    auto scale_uniform_id = glGetUniformLocation(program_id, "scale");
+    db.default_shader().load();
+    glUseProgram(db.default_shader().program_id());
 
     struct result {
         GLFWwindow* win;
-        GLuint program_id;
         GLuint vertex_id;
     };
     return result{
         win,
-        program_id,
         vertex_id,
     };
 }
 
 void systems::core(database* db_ptr) {
     auto& db = *db_ptr;
-    auto [win, program_id, vertex_id] = renderer_init();
+    auto [win, vertex_id] = renderer_init(db);
     auto clock = chrono::steady_clock::now();
     chrono::nanoseconds delta_time(lib::GAME_DELTA_TIME);
 
     for (;;) {
+        // Before rendering we load all shaders
+        {
+            std::scoped_lock lock(db.components<components::shader>().mutex());
+            for (auto& shader : db.components<components::shader>()) {
+                if (!shader.resource->loaded()) {
+                    shader.resource->load();
+                }
+            }
+        }
+
         std::scoped_lock lock(db.entities().mutex());
         {
-            std::scoped_lock lock2(db.components<components::rigid_transform_2d>().mutex(), db.components<components::rotational_transform_2d>().mutex(), db.components<components::mesh_2d>().mutex());
-            if (!systems::routines::render(db, win, program_id, vertex_id)) {
+            std::scoped_lock lock2(db.components<components::rigid_transform_2d>().mutex(), db.components<components::rotational_transform_2d>().mutex(), db.components<components::mesh_2d>().mutex(), db.components<components::shader>().mutex());
+            if (!systems::routines::render(db, win, vertex_id)) {
                 break;
             }
         }
